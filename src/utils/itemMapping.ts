@@ -4,8 +4,7 @@ export function mapItem(item: MenuItem) {
   const itemMap = new Map();
 
   if (item.MenuItemOptionSets.length === 0) {
-    const standalones = [item];
-    return [standalones, []];
+    return [[item], []];
   }
 
   for (const option of item.MenuItemOptionSets) {
@@ -26,6 +25,10 @@ export function mapItem(item: MenuItem) {
 
   const standalones = itemMap.get("standalones");
   const options = itemMap.get("options");
+
+  if (!standalones || standalones.length === 0) {
+    return [[item], options];
+  }
 
   return [standalones, options];
 }
