@@ -75,7 +75,7 @@ type MenuItemOptionSet = {
   MenuItemOptionSetMetadata: unknown[];
 };
 
-type MenuItemOptionSetItem = {
+export type MenuItemOptionSetItem = {
   MenuItemOptionSetItemId: number;
   Name: string;
   Price: number;

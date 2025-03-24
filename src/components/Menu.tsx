@@ -7,7 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import { MenuType } from "@/utils/types/menu";
+import { MenuType, MenuItemOptionSetItem } from "@/utils/types/menu";
+import { mapItem } from "@/utils/itemMapping";
 
 export function Menu() {
   const {
@@ -56,67 +57,108 @@ export function Menu() {
           </div>
           <div className="my-4 grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-4">
             {section.MenuItems.map((item) => {
-              const masterOptionSet = item.MenuItemOptionSets.find(
-                (optionSet) => optionSet.IsMasterOptionSet,
-              );
+              const [standalones, options] = mapItem(item);
 
-              return (
-                <>
-                  {!masterOptionSet ? (
-                    <Card key={item.MenuItemId}>
-                      <CardHeader>
-                        <CardTitle>{item.Name}</CardTitle>
-                        <CardDescription>£{item.Price}</CardDescription>
-                      </CardHeader>
-                      <CardContent className="self-center">
-                        <img
-                          src={item.ImageUrl}
-                          alt={item.Name}
-                          className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
-                        />
-                      </CardContent>
-                      <CardFooter>
-                        <ul>
-                          {item.MenuItemOptionSets.map((optionSet) => {
-                            return optionSet.MenuItemOptionSetItems.map(
-                              (optionItem) => (
-                                <li
-                                  key={optionItem.MenuItemOptionSetItemId}
-                                >{`${optionItem.Name} - + £${optionItem.Price}`}</li>
-                              ),
-                            );
-                          })}
-                        </ul>
-                      </CardFooter>
-                    </Card>
-                  ) : (
-                    item.MenuItemOptionSets.map((optionSet) => {
-                      return optionSet.MenuItemOptionSetItems.map(
-                        (optionItem) => (
-                          <Card key={optionItem.MenuItemOptionSetItemId}>
-                            <CardHeader>
-                              <CardTitle>
-                                {item.Name} - {optionItem.Name}
-                              </CardTitle>
-                            
-                            <CardDescription>
-                              £{optionItem.Price}
-                            </CardDescription>
-                            </CardHeader>
-                            <CardContent className="self-center">
-                              <img
-                                src={item.ImageUrl}
-                                alt={item.Name}
-                                className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
-                              />
-                            </CardContent>
-                          </Card>
-                        ),
-                      );
-                    })
-                  )}
-                </>
-              );
+              if(!standalones) {
+                return null;
+              }
+
+              return standalones.map((standalone: MenuItemOptionSetItem) => (
+                <Card key={standalone.MenuItemOptionSetItemId}>
+                  <CardHeader>
+                    <CardTitle>
+                      {item.Name}
+                      {standalone.Name !== item.Name ? ` - ${standalone.Name}` : null}
+                    </CardTitle>
+                    <CardDescription>
+                      {item.Price > 0 ? `£${item.Price}` : null}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="self-center">
+                    <img
+                      src={item.ImageUrl}
+                      alt={item.Name}
+                      className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
+                    />
+                  </CardContent>
+                  <CardFooter>
+                    <ul>
+                      {!options ? null : options.map(
+                        (option: MenuItemOptionSetItem) => {
+                          return (
+                            <li
+                              key={option.MenuItemOptionSetItemId}
+                            >{`${option.Name} - + £${option.Price}`}</li>
+                          );
+                        },
+                      )}
+                    </ul>
+                  </CardFooter>
+                </Card>
+              ));
+
+              //   const masterOptionSet = item.MenuItemOptionSets.find(
+              //     (optionSet) => optionSet.IsMasterOptionSet,
+              //   );
+
+              //   return (
+              //     <>
+              //       {!masterOptionSet ? (
+              //         <Card key={item.MenuItemId}>
+              //           <CardHeader>
+              //             <CardTitle>{item.Name}</CardTitle>
+              //             <CardDescription>£{item.Price}</CardDescription>
+              //           </CardHeader>
+              //           <CardContent className="self-center">
+              //             <img
+              //               src={item.ImageUrl}
+              //               alt={item.Name}
+              //               className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
+              //             />
+              //           </CardContent>
+              //           <CardFooter>
+              //             <ul>
+              //               {item.MenuItemOptionSets.map((optionSet) => {
+              //                 return optionSet.MenuItemOptionSetItems.map(
+              //                   (optionItem) => (
+              //                     <li
+              //                       key={optionItem.MenuItemOptionSetItemId}
+              //                     >{`${optionItem.Name} - + £${optionItem.Price}`}</li>
+              //                   ),
+              //                 );
+              //               })}
+              //             </ul>
+              //           </CardFooter>
+              //         </Card>
+              //       ) : (
+              //         item.MenuItemOptionSets.map((optionSet) => {
+              //           return optionSet.MenuItemOptionSetItems.map(
+              //             (optionItem) => (
+              //               <Card key={optionItem.MenuItemOptionSetItemId}>
+              //                 <CardHeader>
+              //                   <CardTitle>
+              //                     {item.Name} - {optionItem.Name}
+              //                   </CardTitle>
+
+              //                 <CardDescription>
+              //                   £{optionItem.Price}
+              //                 </CardDescription>
+              //                 </CardHeader>
+              //                 <CardContent className="self-center">
+              //                   <img
+              //                     src={item.ImageUrl}
+              //                     alt={item.Name}
+              //                     className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
+              //                   />
+              //                 </CardContent>
+              //               </Card>
+              //             ),
+              //           );
+              //         })
+              //       )}
+              //     </>
+              //   );
+              // }
             })}
           </div>
         </div>
