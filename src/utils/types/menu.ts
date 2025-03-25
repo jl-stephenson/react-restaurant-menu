@@ -122,6 +122,7 @@ export type Extra = {
   id?: number;
   name?: string;
   price?: number;
+  maxSelectCount: number;
 };
 
 export type TransformedMenuItems = {

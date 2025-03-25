@@ -61,6 +61,7 @@ function transformMenuItem(item: MenuItem):  {
           id: optionItem.MenuItemOptionSetItemId,
           name: optionItem.Name,
           price: optionItem.Price,
+          maxSelectCount: optionSet.MaxSelectCount,
         });
       });
     }
