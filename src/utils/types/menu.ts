@@ -89,7 +89,7 @@ export type MenuItemOptionSetItem = {
   NextMenuItemOptionSetId?: (null | number)[];
   PublicId: string;
   ImageName: string | number;
-  ImageUrl: string | number;
+  ImageUrl: string;
   CellAspectRatio: number;
   CellLayoutType: number;
   OptionSetItemMetadata: unknown[];
@@ -108,4 +108,53 @@ type AvailableTime = {
   Period: string;
   StartTimeEarly: string;
   PeriodEarly: string;
+};
+
+export type DisplayItem = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+};
+
+export type Extra = {
+  id?: number;
+  name?: string;
+  price?: number;
+};
+
+export type TransformedMenuItems = {
+  id: number;
+  displayItems: DisplayItem[];
+  extras: Extra[];
+};
+
+export type TransformedMenu = {
+  MenuId: number;
+  MenuVersionNumber: number;
+  VersionGuid: string;
+  MenuSections: TransformedMenuSection[];
+  MenuSectionBehaviour: number;
+  DisplaySectionLinks: boolean;
+  ConcessionStores: unknown[];
+};
+
+type TransformedMenuSection = {
+  MenuSectionId: number;
+  Name: string;
+  Description: string | null;
+  DisplayOrder: number;
+  MenuItems: TransformedMenuItems[];
+  PublicId: string;
+  IsDeleted: boolean;
+  IsAvailable: boolean;
+  IsHiddenFromUsers: boolean;
+  ImageName: string;
+  ImageUrl: string;
+  CellAspectRatio: number;
+  CellLayoutType: number;
+  MenuSectionAvailability: MenuSectionAvailability;
+  ConcessionStoreId?: unknown;
+  MenuSectionMetadata: unknown[];
 };

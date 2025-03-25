@@ -1,14 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { MenuType, MenuItemOptionSetItem } from "@/utils/types/menu";
-import { mapItem } from "@/utils/itemMapping";
+import { transformMenu } from "@/utils/transformMenu";
+import { MenuItem } from "./MenuItem";
 
 export function Menu() {
   const {
@@ -16,7 +8,7 @@ export function Menu() {
     isLoading,
     isError,
     error,
-  } = useQuery<MenuType>({
+  } = useQuery({
     queryKey: ["menu"],
     queryFn: async () => {
       const response = await fetch(
@@ -24,6 +16,7 @@ export function Menu() {
       );
       return await response.json();
     },
+    select: transformMenu,
   });
 
   console.log(menu);
@@ -40,128 +33,28 @@ export function Menu() {
   }
 
   return (
-    <main className="mx-auto max-w-7xl px-1">
+    <main className="mx-auto mt-6 max-w-7xl space-y-8 px-2">
+      <h1 className="text-center text-4xl">Menu</h1>
       {menu.MenuSections.map((section) => (
-        <div key={section.MenuSectionId}>
-          <div className="grid max-h-72 w-full grid-cols-1 grid-rows-1 overflow-hidden rounded-xl">
-            <div className="z-10 col-span-1 col-start-1 row-start-1 flex h-full w-full items-center justify-start bg-gradient-to-r from-black/80 via-transparent to-transparent p-1">
-              <h2 className="font-display self-justify-end p-4 text-7xl text-white">
-                {section.Name}
-              </h2>
-            </div>
-            <img
-              src={section.ImageUrl}
-              alt={section.Name}
-              className="col-span-1 col-start-1 row-start-1 h-full w-full object-cover object-center"
-            />
-          </div>
+        <section key={section.MenuSectionId}>
+          <div className="bg-accent h-0.5 w-full"></div>
+          <header className="my-1 flex items-center gap-4">
+            {section.ImageUrl ? (
+              <img
+                src={section.ImageUrl}
+                alt={section.Name}
+                className="aspect-square w-full max-w-18 rounded-full object-cover object-center"
+              />
+            ) : null}
+            <h2 className="text-[2rem]">{section.Name}</h2>
+          </header>
+          <div className="bg-accent h-0.5 w-full"></div>
           <div className="my-4 grid grid-cols-[repeat(auto-fit,minmax(350px,1fr))] gap-4">
-            {section.MenuItems.map((item) => {
-              const [standalones, options] = mapItem(item);
-
-              if(!standalones) {
-                return null;
-              }
-
-              return standalones.map((standalone: MenuItemOptionSetItem) => (
-                <Card key={standalone.MenuItemOptionSetItemId}>
-                  <CardHeader>
-                    <CardTitle>
-                      {item.Name}
-                      {standalone.Name !== item.Name ? ` - ${standalone.Name}` : null}
-                    </CardTitle>
-                    <CardDescription>
-                      {item.Price > 0 ? `£${item.Price}` : null}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="self-center">
-                    <img
-                      src={item.ImageUrl}
-                      alt={item.Name}
-                      className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
-                    />
-                  </CardContent>
-                  <CardFooter>
-                    <ul>
-                      {!options ? null : options.map(
-                        (option: MenuItemOptionSetItem) => {
-                          return (
-                            <li
-                              key={option.MenuItemOptionSetItemId}
-                            >{`${option.Name} - + £${option.Price}`}</li>
-                          );
-                        },
-                      )}
-                    </ul>
-                  </CardFooter>
-                </Card>
-              ));
-
-              //   const masterOptionSet = item.MenuItemOptionSets.find(
-              //     (optionSet) => optionSet.IsMasterOptionSet,
-              //   );
-
-              //   return (
-              //     <>
-              //       {!masterOptionSet ? (
-              //         <Card key={item.MenuItemId}>
-              //           <CardHeader>
-              //             <CardTitle>{item.Name}</CardTitle>
-              //             <CardDescription>£{item.Price}</CardDescription>
-              //           </CardHeader>
-              //           <CardContent className="self-center">
-              //             <img
-              //               src={item.ImageUrl}
-              //               alt={item.Name}
-              //               className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
-              //             />
-              //           </CardContent>
-              //           <CardFooter>
-              //             <ul>
-              //               {item.MenuItemOptionSets.map((optionSet) => {
-              //                 return optionSet.MenuItemOptionSetItems.map(
-              //                   (optionItem) => (
-              //                     <li
-              //                       key={optionItem.MenuItemOptionSetItemId}
-              //                     >{`${optionItem.Name} - + £${optionItem.Price}`}</li>
-              //                   ),
-              //                 );
-              //               })}
-              //             </ul>
-              //           </CardFooter>
-              //         </Card>
-              //       ) : (
-              //         item.MenuItemOptionSets.map((optionSet) => {
-              //           return optionSet.MenuItemOptionSetItems.map(
-              //             (optionItem) => (
-              //               <Card key={optionItem.MenuItemOptionSetItemId}>
-              //                 <CardHeader>
-              //                   <CardTitle>
-              //                     {item.Name} - {optionItem.Name}
-              //                   </CardTitle>
-
-              //                 <CardDescription>
-              //                   £{optionItem.Price}
-              //                 </CardDescription>
-              //                 </CardHeader>
-              //                 <CardContent className="self-center">
-              //                   <img
-              //                     src={item.ImageUrl}
-              //                     alt={item.Name}
-              //                     className="aspect-square w-full max-w-3xs rounded-lg object-cover object-center"
-              //                   />
-              //                 </CardContent>
-              //               </Card>
-              //             ),
-              //           );
-              //         })
-              //       )}
-              //     </>
-              //   );
-              // }
-            })}
+            {section.MenuItems.map((item) => (
+              <MenuItem key={item.id} item={item} />
+            ))}
           </div>
-        </div>
+        </section>
       ))}
     </main>
   );

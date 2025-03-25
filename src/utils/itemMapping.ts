@@ -8,7 +8,7 @@ export function mapItem(item: MenuItem) {
   }
 
   for (const option of item.MenuItemOptionSets) {
-    if (option.IsMasterOptionSet) {
+    if (option.IsMasterOptionSet || option.MinSelectCount > 0) {
       const prevStandalones = itemMap.get("standalones") ?? [];
       itemMap.set("standalones", [
         ...prevStandalones,
