@@ -9,7 +9,7 @@ export function ExtrasPopover({ extra }: ExtrasPopoverProps) {
   return (
     <div key={extra.id} className="flex items-center justify-between">
       <label htmlFor={extra.name}>
-        {`${extra.name} (+${formatPrice(extra.price)})`}
+        {`${extra.name} (+${formatPrice(extra.price ?? 0)})`}
       </label>
       <input id={extra.name} type="checkbox" />
     </div>
