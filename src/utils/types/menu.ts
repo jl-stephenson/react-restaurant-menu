@@ -119,9 +119,9 @@ export type DisplayItem = {
 };
 
 export type Extra = {
-  id?: number;
-  name?: string;
-  price?: number;
+  id: number;
+  name: string;
+  price: number;
   maxSelectCount: number;
 };
 
