@@ -7,7 +7,7 @@ type ExtrasPopoverProps = {
 
 export function ExtrasPopover({ extra }: ExtrasPopoverProps) {
   return (
-    <div key={extra.id} className="flex items-center justify-between">
+    <div className="flex items-center justify-between">
       <label htmlFor={extra.name}>
         {`${extra.name} (+${formatPrice(extra.price ?? 0)})`}
       </label>
