@@ -26,9 +26,13 @@ type MenuItemProps = {
 
 export function MenuItem({ item }: MenuItemProps) {
   const methods = useForm();
-  const { watch } = methods;
+  const { watch, reset } = methods;
 
   const formValues = watch("extras") ?? {};
+
+  function handleDialogChange(open: boolean) {
+    if (!open) reset();
+  }
 
   return item.displayItems.map((displayItem: DisplayItem) => (
     <FormProvider key={displayItem.id} {...methods}>
@@ -51,7 +55,7 @@ export function MenuItem({ item }: MenuItemProps) {
           {item.extras.length === 0 ? (
             <Button className="self-end hover:cursor-pointer">Add</Button>
           ) : (
-            <Dialog>
+            <Dialog onOpenChange={handleDialogChange}>
               <DialogTrigger asChild>
                 <Button className="self-end hover:cursor-pointer">Add</Button>
               </DialogTrigger>
