@@ -1,11 +1,11 @@
 import { formatPrice } from "@/utils/formatters";
 import { Extra } from "@/utils/types/menu";
 
-type ExtrasPopoverProps = {
+type ExtrasDialogProps = {
   extra: Extra;
 };
 
-export function ExtrasPopover({ extra }: ExtrasPopoverProps) {
+export function ExtrasDialog({ extra }: ExtrasDialogProps) {
   return (
     <div className="flex items-center justify-between">
       <label htmlFor={extra.name}>

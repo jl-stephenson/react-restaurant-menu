@@ -1,16 +1,24 @@
-import { DisplayItem, TransformedMenuItems } from "@/utils/types/menu";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { ExtrasPopover } from "./ExtrasPopover";
-import { formatPrice } from "@/utils/formatters";
 import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+  DialogHeader,
+  DialogFooter,
+} from "./ui/dialog";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+  } from "./ui/card";
+import { DisplayItem, TransformedMenuItems } from "@/utils/types/menu";
+import { ExtrasDialog } from "./ExtrasDialog";
+import { formatPrice } from "@/utils/formatters";
+
 
 type MenuItemProps = {
   item: TransformedMenuItems;
@@ -37,21 +45,30 @@ export function MenuItem({ item }: MenuItemProps) {
         {item.extras.length === 0 ? (
           <Button className="self-end hover:cursor-pointer">Add</Button>
         ) : (
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button className="self-end hover:cursor-pointer">Extras</Button>
-            </PopoverTrigger>
-            <PopoverContent>
-              <div className="grid gap-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="self-end hover:cursor-pointer">Add</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{displayItem.name}</DialogTitle>
+              </DialogHeader>
+              <form className="grid gap-4">
                 <h4 className="font-medium">Extras:</h4>
                 <div className="grid gap-2">
                   {item.extras.map((extra) => (
-                    <ExtrasPopover key={extra.id} extra={extra} />
+                    <ExtrasDialog key={extra.id} extra={extra} />
                   ))}
                 </div>
-              </div>
-            </PopoverContent>
-          </Popover>
+                <p>Maximum amount of extras, {displayItem.maxSelectCount}, reached</p>
+              </form>
+              <DialogFooter className="w-full">
+                <Button className="w-full" type="submit">
+                  Add for {formatPrice(displayItem.price)}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         )}
       </CardFooter>
     </Card>

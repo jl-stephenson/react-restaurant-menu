@@ -116,13 +116,13 @@ export type DisplayItem = {
   description: string;
   price: number;
   imageUrl: string;
+  maxSelectCount: number;
 };
 
 export type Extra = {
   id: number;
   name: string;
   price: number;
-  maxSelectCount: number;
 };
 
 export type TransformedMenuItems = {

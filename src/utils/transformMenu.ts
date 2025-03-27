@@ -20,8 +20,8 @@ export function transformMenu(data: MenuType): TransformedMenu {
   return transformedMenu;
 }
 
-function transformMenuItem(item: MenuItem):  {
-    id: number;
+function transformMenuItem(item: MenuItem): {
+  id: number;
   displayItems: DisplayItem[];
   extras: Extra[];
 } {
@@ -35,8 +35,9 @@ function transformMenuItem(item: MenuItem):  {
       description: item.Description,
       price: item.Price,
       imageUrl: item.ImageUrl,
+      maxSelectCount: 1,
     });
-    return {id: item.MenuItemId, displayItems, extras };
+    return { id: item.MenuItemId, displayItems, extras };
   }
 
   for (const optionSet of item.MenuItemOptionSets) {
@@ -53,6 +54,7 @@ function transformMenuItem(item: MenuItem):  {
             ? item.Price + optionItem.Price
             : optionItem.Price,
           imageUrl: optionItem.ImageUrl ? optionItem.ImageUrl : item.ImageUrl,
+          maxSelectCount: optionSet.MaxSelectCount,
         });
       });
     } else {
@@ -61,7 +63,6 @@ function transformMenuItem(item: MenuItem):  {
           id: optionItem.MenuItemOptionSetItemId,
           name: optionItem.Name,
           price: optionItem.Price,
-          maxSelectCount: optionSet.MaxSelectCount,
         });
       });
     }
@@ -74,6 +75,7 @@ function transformMenuItem(item: MenuItem):  {
       description: item.Description,
       price: item.Price,
       imageUrl: item.ImageUrl,
+      maxSelectCount: item.MenuItemOptionSets[0].MaxSelectCount,
     });
   }
 
