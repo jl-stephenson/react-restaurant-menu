@@ -26,15 +26,13 @@ type MenuItemProps = {
 
 export function MenuItem({ item }: MenuItemProps) {
   const methods = useForm();
-
   const { watch } = methods;
 
   const formValues = watch("extras") ?? {};
 
-
   return item.displayItems.map((displayItem: DisplayItem) => (
-    <FormProvider {...methods}>
-      <Card key={displayItem.id}>
+    <FormProvider key={displayItem.id} {...methods}>
+      <Card>
         <CardHeader>
           <CardTitle>{displayItem.name}</CardTitle>
           <CardDescription>{formatPrice(displayItem.price)}</CardDescription>
@@ -58,32 +56,32 @@ export function MenuItem({ item }: MenuItemProps) {
                 <Button className="self-end hover:cursor-pointer">Add</Button>
               </DialogTrigger>
               <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{displayItem.name}</DialogTitle>
-                </DialogHeader>
-                <form className="grid gap-4">
-                  <h4 className="font-medium">Extras:</h4>
-                  <div className="grid gap-2">
-                    {item.extras.map((extra) => (
-                      <ExtrasDialog
-                        key={extra.id}
-                        extra={extra}
-                      />
-                    ))}
+                <form>
+                  <DialogHeader>
+                    <DialogTitle>{displayItem.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid gap-4">
+                    <h4 className="font-medium">Extras:</h4>
+                    <div className="grid gap-2">
+                      {item.extras.map((extra) => (
+                        <ExtrasDialog key={extra.id} extra={extra} />
+                      ))}
+                    </div>
+                    {Object.values(formValues).filter(
+                      (value) => value !== false,
+                    ).length === displayItem.maxSelectCount && (
+                      <p className="text-red-700">
+                        Maximum number of extras ({displayItem.maxSelectCount})
+                        reached
+                      </p>
+                    )}
                   </div>
-                  {Object.values(formValues).filter((value) => value !== false).length ===
-                    displayItem.maxSelectCount && (
-                    <p className="text-red-700">
-                      Maximum number of extras ({displayItem.maxSelectCount})
-                      reached
-                    </p>
-                  )}
+                  <DialogFooter className="w-full">
+                    <Button className="w-full" type="submit">
+                      Add for {formatPrice(displayItem.price)}
+                    </Button>
+                  </DialogFooter>
                 </form>
-                <DialogFooter className="w-full">
-                  <Button className="w-full" type="submit">
-                    Add for {formatPrice(displayItem.price)}
-                  </Button>
-                </DialogFooter>
               </DialogContent>
             </Dialog>
           )}
