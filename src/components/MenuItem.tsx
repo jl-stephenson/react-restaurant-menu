@@ -47,12 +47,12 @@ export function MenuItem({ item }: MenuItemProps) {
 
     return (
       <FormProvider key={displayItem.id} {...methods}>
-        <Card>
+        <Card className="h-full">
           <CardHeader>
             <CardTitle>{displayItem.name}</CardTitle>
             <CardDescription>{formatPrice(displayItem.price)}</CardDescription>
           </CardHeader>
-          <CardContent className="self-center">
+          <CardContent className="self-center flex-1">
             <img
               src={displayItem.imageUrl}
               alt={displayItem.name}
@@ -72,7 +72,7 @@ export function MenuItem({ item }: MenuItemProps) {
                 </DialogTrigger>
                 <DialogContent>
                   <form>
-                    <DialogHeader>
+                    <DialogHeader className="mb-4">
                       <DialogTitle>{displayItem.name}</DialogTitle>
                     </DialogHeader>
                     <div className="mb-4 grid gap-4">
