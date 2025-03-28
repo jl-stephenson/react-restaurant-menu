@@ -4,10 +4,13 @@ import { Extra } from "@/utils/types/menu";
 
 type ExtrasDialogProps = {
   extra: Extra;
+  maxSelected: boolean;
+  checked: boolean;
 };
 
-export function ExtrasDialog({ extra }: ExtrasDialogProps) {
+export function ExtrasDialog({ extra, maxSelected, checked }: ExtrasDialogProps) {
   const { register } = useFormContext();
+  const isDisabled = maxSelected && !checked;
 
   return (
     <div className="flex items-center justify-between">
@@ -18,6 +21,7 @@ export function ExtrasDialog({ extra }: ExtrasDialogProps) {
         {...register(`extras.extra_${extra.id}`)}
         id={extra.name}
         type="checkbox"
+        disabled={isDisabled}
       />
     </div>
   );
