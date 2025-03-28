@@ -38,12 +38,12 @@ export function Menu() {
       {menu.MenuSections.map((section) => (
         <section key={section.MenuSectionId}>
           <div className="bg-accent h-0.5 w-full"></div>
-          <header className="my-1 flex items-center gap-4">
+          <header className="my-1 flex items-center gap-6">
             {section.ImageUrl ? (
               <img
                 src={section.ImageUrl}
                 alt={section.Name}
-                className="aspect-square w-full max-w-18 rounded-full object-cover object-center"
+                className="aspect-square w-full max-w-16 rounded-full object-cover object-center"
               />
             ) : null}
             <h2 className="text-[2rem]">{section.Name}</h2>
