@@ -1,9 +1,15 @@
+import path from 'node:path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: 'happy-dom',        // or 'jsdom'
-    globals: true,                   // enable global describe/expect
-    setupFiles: ['./test-setup.ts'], // your global setup
+    environment: 'happy-dom',    
+    globals: true,                   
+    setupFiles: ['./test-setup.ts'], 
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
   },
 });
