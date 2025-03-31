@@ -1,28 +1,23 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { render, screen, waitFor } from "@testing-library/react";
 import nock from "nock";
-import { ReactNode } from "react";
-import { useMenu } from "@/hooks/useMenu";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Menu } from "./Menu";
 import menuData from "@/__mocks__/menuData.json";
 
-describe("tanstack query", () => {
+describe("menu page render", () => {
   let queryClient: QueryClient;
-  let wrapper: ({ children }: { children: ReactNode }) => ReactNode;
 
   beforeEach(() => {
-    queryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          retry: false,
-        },
-      },
-    });
-    wrapper = ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    queryClient = new QueryClient();
+    nock("https://menus.flipdish.co")
+      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
+      .reply(200, menuData);
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Menu />
+      </QueryClientProvider>,
     );
   });
 
@@ -30,41 +25,30 @@ describe("tanstack query", () => {
     nock.cleanAll();
   });
 
-  it("fetches menu data", async () => {
-    nock("https://menus.flipdish.co")
-      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
-      .reply(200, menuData);
-
-    const { result } = renderHook(() => useMenu(), { wrapper });
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(result.current.data).toHaveProperty("MenuSections");
+  it("renders loading correctly", async () => {
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByText("Loading...")).not.toBeInTheDocument(),
+    );
   });
 
-  it("handles error responses", async () => {
-    nock("https://menus.flipdish.co")
-      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
-      .replyWithError({ error: "Internal Server Error" });
-
-    const { result } = renderHook(() => useMenu(), { wrapper });
-    await waitFor(() => expect(result.current.isError).toBe(true));
-    expect(result.current.error).toBeDefined();
+  it("renders page title", () => {
+    expect(screen.getByRole("heading", { level: 1 }).textContent).toBe("Menu");
   });
 
-  it("transforms the menu data", async () => {
-    nock("https://menus.flipdish.co")
-      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
-      .reply(200, menuData);
-
-    const { result } = renderHook(() => useMenu(), { wrapper });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(result.current.data?.MenuSections[0].MenuItems[0]).toHaveProperty(
-      "displayItems",
+  it("renders section header", async () => {
+    const firstSectionHeader = menuData.MenuSections[0].Name;
+    const sections = await waitFor(() =>
+      screen.getAllByRole("heading", { level: 2 }),
     );
-    expect(result.current.data?.MenuSections[0].MenuItems[0]).toHaveProperty(
-      "extras",
+    expect(sections[0].textContent).toEqual(firstSectionHeader);
+  });
+
+  it("renders menu item", async () => {
+    const firstItemHeader = menuData.MenuSections[0].MenuItems[0].Name;
+    const items = await waitFor(() =>
+      screen.getAllByText((content) => content.includes(firstItemHeader)),
     );
+    expect(items[0].textContent).toContain(firstItemHeader);
   });
 });
