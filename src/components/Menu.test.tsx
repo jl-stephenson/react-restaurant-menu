@@ -1,26 +1,13 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import {
   QueryClient,
   QueryClientProvider,
-  useQuery,
 } from "@tanstack/react-query";
 import nock from "nock";
 import { ReactNode } from "react";
-
-function useCustomHook() {
-  return useQuery({ queryKey: ["customHook"], queryFn: () => "Hello" });
-}
-
-function useFetchData() {
-  return useQuery({
-    queryKey: ["fetchData"],
-    queryFn: async () => {
-      const response = fetch("http://www.example.com/menu");
-      return (await response).json();
-    },
-  });
-}
+import { useMenu } from "@/hooks/useMenu";
+import menuData from "@/__mocks__/menuData.json";
 
 describe("tanstack query", () => {
   let queryClient: QueryClient;
@@ -39,29 +26,45 @@ describe("tanstack query", () => {
     );
   });
 
-  it("successfully returns hello", async () => {
-    const { result } = renderHook(() => useCustomHook(), { wrapper });
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual("Hello");
+  afterEach(() => {
+    nock.cleanAll();
   });
 
-  it("returns a success message", async () => {
-    nock("http://www.example.com").get("/menu").reply(200, {
-      message: "ok",
-    });
+  it("fetches menu data", async () => {
+    nock("https://menus.flipdish.co")
+      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
+      .reply(200, menuData);
 
-    const { result } = renderHook(() => useFetchData(), { wrapper });
+    const { result } = renderHook(() => useMenu(), { wrapper });
+
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual({ message: "ok" });
+
+    expect(result.current.data).toHaveProperty("MenuSections");
   });
 
   it("handles error responses", async () => {
-    nock("http://www.example.com")
-      .get("/menu")
+    nock("https://menus.flipdish.co")
+      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
       .replyWithError({ error: "Internal Server Error" });
 
-    const { result } = renderHook(() => useFetchData(), { wrapper });
+    const { result } = renderHook(() => useMenu(), { wrapper });
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error).toBeDefined();
+  });
+
+  it("transforms the menu data", async () => {
+    nock("https://menus.flipdish.co")
+      .get("/prod/16798/e6220da2-c34a-4ea2-bb51-a3e190fc5f08.json")
+      .reply(200, menuData);
+
+    const { result } = renderHook(() => useMenu(), { wrapper });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+    expect(result.current.data?.MenuSections[0].MenuItems[0]).toHaveProperty(
+      "displayItems",
+    );
+    expect(result.current.data?.MenuSections[0].MenuItems[0]).toHaveProperty(
+      "extras",
+    );
   });
 });
